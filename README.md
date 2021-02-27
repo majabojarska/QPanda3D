@@ -1,17 +1,20 @@
-
 # QPanda3D
 
-A working Panda3D wrapper for PyQt5
-The objective is to be able to put on the same screen, panda3D and pyQT widgets.
+A PyQt5 wrapper for Panda3D scenes. Allows embedding a Panda3D world within a PyQt5 GUI.
 
-This package is still a work in progress.
-What works :
+**This package is still a work in progress.**
 
-- Creating a panda3D world inside a seemlessly QWidget object that can be placed alog with other QT stuff
-- Full access to panda3D objects, lights ...
-- Keyboard press and up are supported starting from v 0.5
+What works:
+
+- Embedding a Panda3D world inside a QWidget, that can be placed within a PyQt5 GUI.
+- Full access to Panda3D nodes.
+- Hardware support:
+    - Key press and release events. This includes `Ctrl`, `Shift`, `Alt` modifier keys and mouse buttons.
+    - Mouse movement and scroll wheel events.
+
 What doesn't work yet:
-- Mouse and timed keyboard interactions
+
+- Timed keyboard interactions.
 
 ## Installation
 
@@ -21,78 +24,47 @@ pip install QPanda3D
 
 ## Usage
 
-1 - create your world by inheriting from Panda3DWorld
+### 1. Subclass Panda3DWorld to implement a custom world.
 
 ```python
 from QPanda3D.Panda3DWorld import Panda3DWorld
+
 class MyWorld(Panda3DWorld):
-        Panda3DWorld.__init__(self)
-        # from this point, act as if you are defining a classic panda3D environment
-        self.cam.setPos(0, -28, 6)
-        self.testModel = loader.loadModel('panda')
-        self.testModel.reparentTo(render)
-```
-
-2 - In your main, just create an instance of your world, create a Q
-
-```python
-from QPanda3D.QPanda3DWidget import QPanda3DWidget
-if __name__ == "__main__":
-    world = MyWorld()
-    
-    app = QApplication(sys.argv)
-    appw=QMainWindow()
-    appw.setGeometry(50, 50, 800, 600)
-
-    pandaWidget = QPanda3DWidget(world)
-    appw.setCentralWidget(pandaWidget)
-    appw.show()
-    
-    sys.exit(app.exec_())
-
-```
-
-## Widget resizing policy
-
-Starting from V 0.4, the widget is automatically resized without making any stretching artefacts. Resizing policy parameters (introduced in V 0.2) have been removed since they are no more needed.
-  
-```python
-from QPanda3D.QPanda3DWidget import QPanda3DWidget
-if __name__ == "__main__":
-    world = MyWorld()
-    
-    app = QApplication(sys.argv)
-    appw=QMainWindow()
-    appw.setGeometry(50, 50, 800, 600)
-
-    pandaWidget = QPanda3DWidget(world)
-    appw.setCentralWidget(pandaWidget)
-    appw.show()
-    
-    sys.exit(app.exec_())
-
-```
-
-you can also tell the Panda3DWorld object what is the default view size that you prefer when creating it.
-
-```python
-from QPanda3D.Panda3DWorld import Panda3DWorld
-class MyWorld(Panda3DWorld):
+    def __init__(self):
         Panda3DWorld.__init__(self, width=1024, height=768)
-        # from this point, act as if you are defining a classic panda3D environment
+        # from this point, act as if you are defining a classic Panda3D environment.
         self.cam.setPos(0, -28, 6)
-        self.testModel = loader.loadModel('panda')
-        self.testModel.reparentTo(render)
+        self.testModel = self.loader.loadModel('panda')
+        self.testModel.reparentTo(self.render)
 ```
 
-Just make sure that your ratio is adequate with your real widget size.
+### 2. Embed a Panda3DWorld instance within a PyQt5 GUI
+
+```python
+import sys
+
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from QPanda3D.QPanda3DWidget import QPanda3DWidget
+
+if __name__ == "__main__":
+    world = MyWorld()
+
+    app = QApplication(sys.argv)
+    appw = QMainWindow()
+    appw.setGeometry(50, 50, 800, 600)
+
+    pandaWidget = QPanda3DWidget(world)
+    appw.setCentralWidget(pandaWidget)
+    appw.show()
+
+    sys.exit(app.exec_())
+```
 
 ## Special thanks
 
-I want to thank all the contributers to this little opensource project.
-In chronological order :
+I want to thank all the contributors to this little open source project. In chronological order:
 
 - Thanks to [fraca7](https://github.com/fraca7) for his commit (Change film size according to widget resize)
-- Many thanks to [nmevenkamp](https://github.com/nmevenkamp) for the valuable updates and bugfixes he apported to this project.
+- Many thanks to [nmevenkamp](https://github.com/nmevenkamp) for the valuable updates and bugfixes he contributed to this project.
 
-If other people want to contribute to this project, the're welcome.
+If other people want to contribute to this project, they're welcome.
